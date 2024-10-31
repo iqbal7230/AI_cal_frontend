@@ -27,11 +27,20 @@ export default function Home() {
     const [latexPosition, setLatexPosition] = useState({ x: 10, y: 200 });
     const [latexExpression, setLatexExpression] = useState<Array<string>>([]);
 
+
+    declare global {
+        interface Window {
+            MathJax: any;
+        }
+    }
+
     // const lazyBrush = new LazyBrush({
     //     radius: 10,
     //     enabled: true,
     //     initialPoint: { x: 0, y: 0 },
     // });
+  
+
 
     useEffect(() => {
         if (latexExpression.length > 0 && window.MathJax) {
