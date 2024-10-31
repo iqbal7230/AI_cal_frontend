@@ -28,12 +28,6 @@ export default function Home() {
     const [latexExpression, setLatexExpression] = useState<Array<string>>([]);
 
 
-    declare global {
-        interface Window {
-            MathJax: any;
-        }
-    }
-
     // const lazyBrush = new LazyBrush({
     //     radius: 10,
     //     enabled: true,
