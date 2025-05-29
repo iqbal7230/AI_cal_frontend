@@ -150,8 +150,8 @@ export default function Home() {
         const canvas = canvasRef.current;
 
         if (canvas) {
-            // const backend_url = "https://ai-cal-backend.onrender.com"
-            const backend_url = "http://localhost:8000"
+            const backend_url = "https://ai-cal-backend.onrender.com"
+            // const backend_url = "http://localhost:8000"
             const response = await axios({
                 method: 'post',
                 url: `${backend_url}/calculate`,
