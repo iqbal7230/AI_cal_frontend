@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import Draggable from 'react-draggable';
-import {SWATCHES} from '@/constants';
+import { SWATCHES } from '@/constants';
 // import {LazyBrush} from 'lazy-brush';
 
 interface GeneratedResult {
@@ -33,7 +33,7 @@ export default function Home() {
     //     enabled: true,
     //     initialPoint: { x: 0, y: 0 },
     // });
-  
+
 
 
     useEffect(() => {
@@ -62,7 +62,7 @@ export default function Home() {
 
     useEffect(() => {
         const canvas = canvasRef.current;
-    
+
         if (canvas) {
             const ctx = canvas.getContext('2d');
             if (ctx) {
@@ -80,7 +80,7 @@ export default function Home() {
 
         script.onload = () => {
             window.MathJax.Hub.Config({
-                tex2jax: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+                tex2jax: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
             });
         };
 
@@ -91,8 +91,9 @@ export default function Home() {
     }, []);
 
     const renderLatexToCanvas = (expression: string, answer: string) => {
-        const latex = `\\(\\LARGE{${expression} = ${answer}}\\)`;
+        const latex = `\\(\\LARGE{\\text{${expression} = ${answer}}}\\)`;
         setLatexExpression([...latexExpression, latex]);
+
 
         // Clear the main canvas
         const canvas = canvasRef.current;
@@ -143,13 +144,14 @@ export default function Home() {
     };
     const stopDrawing = () => {
         setIsDrawing(false);
-    };  
+    };
 
     const runRoute = async () => {
         const canvas = canvasRef.current;
-    
+
         if (canvas) {
-            const backend_url = "https://ai-cal-backend.onrender.com"
+            // const backend_url = "https://ai-cal-backend.onrender.com"
+            const backend_url = "http://localhost:8000"
             const response = await axios({
                 method: 'post',
                 url: `${backend_url}/calculate`,
@@ -186,7 +188,7 @@ export default function Home() {
                 }
             }
 
-            const centerX = (minX + maxX) / 2;
+            const centerX = (minX + maxX) / 3;
             const centerY = (minY + maxY) / 2;
 
             setLatexPosition({ x: centerX, y: centerY });
@@ -203,33 +205,51 @@ export default function Home() {
 
     return (
         <>
-            <div className='grid grid-cols-3 gap-2'>
+
+            <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-50 
+      bg-[linear-gradient(to_right,rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.1)_1px,transparent_1px)] 
+      bg-[size:20px_20px]" />
+
+
+
+
+            <div className='grid grid-cols-3 gap-2 z-10' >
+
                 <Button
                     onClick={() => setReset(true)}
-                    className='z-20 bg-black text-white'
-                    variant='default' 
+                    className='z-20 bg-black text-white border'
+                    variant='default'
                     color='black'
                 >
                     Reset
                 </Button>
-                <Group className='z-20'>
+                <Group className="z-20">
                     {SWATCHES.map((swatch) => (
-                        <ColorSwatch key={swatch} color={swatch} onClick={() => setColor(swatch)} />
+                        <div
+                            key={swatch}
+                            onClick={() => setColor(swatch)}
+                            className={`p-0.5 rounded-full border-2 cursor-pointer ${color === swatch ? 'border-black' : 'border-gray-300'
+                                }`}
+                        >
+                            <ColorSwatch color={swatch} />
+                        </div>
                     ))}
                 </Group>
+
                 <Button
                     onClick={runRoute}
-                    className='z-20 bg-black text-white'
+                    className='z-20 bg-black text-white border'
                     variant='default'
                     color='white'
                 >
                     Run
                 </Button>
             </div>
+
             <canvas
                 ref={canvasRef}
                 id='canvas'
-                className='absolute top-0 left-0 w-full h-full'
+                className='absolute top-0 left-0 w-full h-full z-10'
                 onMouseDown={startDrawing}
                 onMouseMove={draw}
                 onMouseUp={stopDrawing}
@@ -242,11 +262,12 @@ export default function Home() {
                     defaultPosition={latexPosition}
                     onStop={(_, data) => setLatexPosition({ x: data.x, y: data.y })}
                 >
-                    <div className="absolute p-2 text-white rounded shadow-md">
-                        <div className="latex-content">{latex}</div>
+                    <div className="absolute p-2 text-white rounded shadow-md z-10">
+                        <div className="latex-content ">{latex}</div>
                     </div>
                 </Draggable>
             ))}
+
         </>
     );
 }
